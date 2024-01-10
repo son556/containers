@@ -1,9 +1,8 @@
 NAME = STL
 
 ## ANSI escape code
-CYAN  := \033[1;36;40m
-RESET := \033[0m
-LOG   := printf "[$(CYAN)INFO$(RESET)] %s\n"
+# CYAN  := \033[1;36;40m
+# RESET := \033[0m
 
 INC_DIRS += iterator vector test priority_queue deque queue stack list
 
@@ -26,26 +25,21 @@ CXXFLAGS = -std=c++98 $(addprefix -I,$(INC_DIRS))
 all: $(NAME)
 
 $(NAME): $(OBJS)
-	@$(LOG) "Link"
 	$(CXX) $(CXXFLAGS) -o $@ $(OBJS) 
 
 $(OBJS): %.o: %.cpp $(HEADERS)
-	@$(LOG) "Compile"
-	@$(CXX) $(CXXFLAGS) -o $@ -c $<
+	$(CXX) $(CXXFLAGS) -o $@ -c $<
 
 clean:
-	@$(LOG) "clean"
-	@rm -f std_out
-	@rm -f ft_out
-	@rm -f $(OBJS) 
+	@erase std_out
+	@erase ft_out
+	@erase $(OBJS) 
 
 fclean: clean
-	@$(LOG) "fclean"
-	@rm -f std_out
-	@rm -f ft_out
-	@rm -f $(NAME)
+	@erase std_out
+	@erase ft_out
+	@erase $(NAME).exe
 
 re:
-	@$(LOG) "re"
 	@make fclean
 	@make all
