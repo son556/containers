@@ -18,8 +18,8 @@ OBJS = $(SRCS:.cpp=.o)
 ## compile
 # CXX= c++ -fsanitize=address -g
 CXX= c++ -g
-CXXFLAGS = -std=c++98 $(addprefix -I,$(INC_DIRS))
-#
+# CXXFLAGS = -std=c++98 $(addprefix -I,$(INC_DIRS))
+CXXFLAGS = $(addprefix -I,$(INC_DIRS))
 .PHONY: clean, fclean, re, all
 
 all: $(NAME)

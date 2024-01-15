@@ -14,42 +14,58 @@
 #include <stack>
 #include <list>
 
-int main()
-{
-	ft::vector<int> test;
-	for (int i = 1; i <= 5; i++) test.push_back(i);
-	ft::list<int> lstt(test.begin(), test.end());
-	ft::list<int>::reverse_iterator it2 = lstt.rbegin();
-	for (; it2 != lstt.rend(); ++it2) {
-		std::cout << *it2 << std::endl;
+template<typename Iterator>
+void display(Iterator iter, int n) {
+	for (int i = 0; i < n; i++) {
+		std::cout << *iter << ' ';
+		iter++;
 	}
 	std::cout << std::endl;
+}
 
-	// std::vector<int> test2; // rbegin ?? rend??
-	// for (int i = 1; i <= 5; i++) test2.push_back(i);
-	// std::list<int> lstt2(test2.begin(), test2.end());
-	// std::list<int>::reverse_iterator it3 = lstt2.rbegin();
-	// for (; it3 != lstt2.rend(); ++it3) {
-	// 	std::cout << *it2 << std::endl;
-	// }
+template<typename Iterator>
+void reverseDisplay(Iterator iter, int n) {
+	for (int i = 0; i < n; i++) {
+		std::cout << *iter << ' ';
+		iter--;
+	}
+	std::cout << std::endl;
+}
 
-	// std::list<int> test3(test2.begin(), test2.end());
-	// std::list<int>::iterator it = test3.end();
-	// std::cout << "test---------------------\n";
-	// for (int i = 0; i < 20; i++) {
-	// 	std::cout << *it << ' ';
-	// 	if (i && i % 10 == 0) std::cout << std::endl;
-	// 	it--;
-	// }
-	// std::cout << std::endl;
 
-	// std::vector<int> test;
-	// for (int i = 1; i <= 5; i++) test.push_back(i);
-	// std::list<int> lstt(test.begin(), test.end());
-	// std::list<int>::reverse_iterator it2 = lstt.rbegin();
-	// for (; it2 != lstt.rend(); ++it2) {
-	// 	std::cout << *it2 << std::endl;
-	// }
-	// std::cout << std::endl;
+int main()
+{
+	ft::list<int> lst;
+	for (int i = 1; i <= 10; i++) lst.push_back(i);
 
+	lst.resize(5);
+	ft::list<int> lstt;
+	for (int i = 1; i < 6; i++) lstt.push_back(-i);
+	ft::list<int>::iterator it = lst.begin();
+	it++;
+	lst.splice(it, lstt);
+	lstt.splice (lstt.begin(), lst, it);
+	display(lst.begin(), lst.size());
+	display(lstt.begin(), 3);
+	std::cout << *it << std::endl;
+
+	std::cout << "\n\nreal-----------------------------\n\n";
+
+	std::list<int> mylist;
+
+	// set some initial content:
+	for (int i=1; i<10; ++i) mylist.push_back(i);
+
+	mylist.resize(5);
+	std::list<int> mylist2;
+	for (int i = 1; i < 6; i++) mylist2.push_back(-i);
+	std::list<int>::iterator itest = mylist.begin();
+	itest++;
+	mylist.splice(itest, mylist);
+	mylist2.splice(mylist2.begin(), mylist, itest);
+	display(mylist.begin(), mylist.size());
+	display(mylist2.begin(), 3);
+	std::cout << *(++itest) << std::endl;
+
+	return 0;
 }

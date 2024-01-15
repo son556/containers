@@ -35,7 +35,6 @@ namespace ft {
 			}
 			
 			reference operator*() { return ptr->val; }
-			const reference operator*() const { return ptr->val; }
 			
 			pointer operator->() const { return ptr; }
 			
