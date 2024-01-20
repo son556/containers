@@ -316,22 +316,164 @@ namespace ft {
 			}
 
 			void splice (iterator position, list& x) {
-				iterator it = position;
-				iterator itt = x.end();
-				itt--;
-				for (size_type i = 0; i < x.size(); i++) {
-					it = this->insert(it, *itt);
-					itt--;
+				if (this->_size + x._size > this->_max_size)
+					throw std::out_of_range("ft::list");
+				iterator x_it;
+				if (position.get_ptr() == this->_head) {
+					while (x.size()) {
+						x_it = x.end();
+						x_it--;
+						x._tail->before = x_it.get_ptr()->before;
+						x_it.get_ptr()->before->next = x._tail;
+						this->_head->before = x_it.get_ptr();
+						x_it.get_ptr()->next = this->_head;
+						x_it.get_ptr()->before = this->_tail;
+						this->_tail->next = x_it.get_ptr();
+						this->_head = x_it.get_ptr();
+						this->_size++;
+						x._size--;
+					}
 				}
-				x.clear();
+				else {
+					while (x.size()) {
+						x_it = x.end();
+						x_it--;
+						x._tail->before = x_it.get_ptr()->before;
+						x_it.get_ptr()->before->next = x._tail;
+						x_it.get_ptr()->before = position.get_ptr()->before;
+						x_it.get_ptr()->next = position.get_ptr();
+						position.get_ptr()->before->next = x_it.get_ptr();
+						position.get_ptr()->before = x_it.get_ptr();
+						position = iterator(x_it.get_ptr());
+						this->_size++;
+						x._size--;
+					}
+				}
 			}
 	
 			void splice (iterator position, list& x, iterator i) {
-				this->insert(position, *i);
-				x.erase(i);
+				if (this->_size + 1 > this->_max_size)
+					throw std::out_of_range("ft::list");
+				i.get_ptr()->before->next = i.get_ptr()->next;
+				i.get_ptr()->next->before = i.get_ptr()->before;
+				if (i.get_ptr() == x._head)
+					x._head = i.get_ptr()->next;
+				x._size--;
+				this->_size++;
+				if (position.get_ptr() == this->_head) {
+					this->_head->before = i.get_ptr();
+					this->_tail->next = i.get_ptr();
+					i.get_ptr()->before = this->_tail;
+					i.get_ptr()->next = this->_head;
+					this->_head = i.get_ptr();
+					return;
+				}
+				position.get_ptr()->before->next = i.get_ptr();
+				i.get_ptr()->before = position.get_ptr()->before;
+				i.get_ptr()->next = position.get_ptr();
+				position.get_ptr()->before = i.get_ptr();
 			}
 	
-			void splice (iterator position, list& x, iterator first, iterator last);
+			void splice (iterator position, list& x, iterator first, iterator last) {
+				iterator tmp;
+				last--;
+				int flag = 0;
+				while (1) {
+					tmp = last;
+					tmp--;
+					splice(position, x, last);
+					position--;
+					last = tmp;
+					if (flag)
+						break;
+					if (first == last)
+						flag = 1;
+				}
+			}
+
+			void remove (const value_type& val) {
+				iterator it = this->begin();
+				iterator tmp_it;
+				while (it != this->end()) {
+					if (*it == val) {
+						this->_size--;
+						it.get_ptr()->before->next = it.get_ptr()->next;
+						it.get_ptr()->next->before = it.get_ptr()->before;
+						if (it.get_ptr() == this->_head)
+							this->_head = it.get_ptr()->next;
+						tmp_it = iterator(it.get_ptr()->next);
+						this->_allocNode.destroy(it.get_ptr());
+						this->_allocNode.deallocate(it.get_ptr(), 1);
+						it = tmp_it;
+						continue;
+					}
+					it++;
+				}
+			}
+
+			template <class Predicate>  
+			void remove_if (Predicate pred) {
+				iterator it = this->begin();
+				iterator tmp_it;
+				while (it != this->end()) {
+					if (pred(*it)) {
+						this->_size--;
+						it.get_ptr()->before->next = it.get_ptr()->next;
+						it.get_ptr()->next->before = it.get_ptr()->before;
+						if (it.get_ptr() == this->_head)
+							this->_head = it.get_ptr()->next;
+						tmp_it = iterator(it.get_ptr()->next);
+						this->_allocNode.destroy(it.get_ptr());
+						this->_allocNode.deallocate(it.get_ptr(), 1);
+						it = tmp_it;
+						continue;
+					}
+					it++;
+				}
+			}
+
+			void unique() {
+				iterator it = this->begin();
+				iterator n_it = iterator(it.get_ptr()->next);
+				while (n_it != this->end()) {
+					if (*it == *n_it) {
+						it.get_ptr()->next = n_it.get_ptr()->next;
+						n_it.get_ptr()->next->before = it.get_ptr();
+						this->_size--;
+						this->_allocNode.destroy(n_it.get_ptr());
+						this->_allocNode.deallocate(n_it.get_ptr(), 1);
+						n_it = iterator(it.get_ptr()->next);
+						continue;
+					}
+					it = n_it;
+					n_it = iterator(it.get_ptr()->next);
+				}
+			}
+
+			template <class BinaryPredicate>  
+			void unique (BinaryPredicate binary_pred) {
+				iterator it = this->begin();
+				iterator n_it = iterator(it.get_ptr()->next);
+				while (n_it != this->end()) {
+					if (binary_pred(*it, *n_it)) {
+						it.get_ptr()->next = n_it.get_ptr()->next;
+						n_it.get_ptr()->next->before = it.get_ptr();
+						this->_size--;
+						this->_allocNode.destroy(n_it.get_ptr());
+						this->_allocNode.deallocate(n_it.get_ptr(), 1);
+						n_it = iterator(it.get_ptr()->next);
+						continue;
+					}
+					it = n_it;
+					n_it = iterator(it.get_ptr()->next);
+				}
+			}
+
+			void merge (list& x) {
+				
+			}
+
+			template <class Compare>  void merge (list& x, Compare comp);
     };
 }
 

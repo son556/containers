@@ -33,39 +33,41 @@ void reverseDisplay(Iterator iter, int n) {
 }
 
 
+using namespace std;
+
+bool helloTest(int a, int b) {
+	if (a > b) return false;
+	return true;
+}
+
+template<typename T>
+bool ttest(T f, int n) {
+	return f(n);
+}
+
 int main()
 {
 	ft::list<int> lst;
-	for (int i = 1; i <= 10; i++) lst.push_back(i);
-
-	lst.resize(5);
-	ft::list<int> lstt;
-	for (int i = 1; i < 6; i++) lstt.push_back(-i);
-	ft::list<int>::iterator it = lst.begin();
-	it++;
-	lst.splice(it, lstt);
-	lstt.splice (lstt.begin(), lst, it);
+	for (int i = 0; i < 5; i++) {
+		lst.push_back(i + 1);
+		lst.push_back(i + 1);
+	}
+	lst.push_back(1);
+	lst.unique(helloTest);
+	cout << lst.size() << endl;
 	display(lst.begin(), lst.size());
-	display(lstt.begin(), 3);
-	std::cout << *it << std::endl;
 
-	std::cout << "\n\nreal-----------------------------\n\n";
+	cout << "\n\n--------------real-----------------\n\n";
 
-	std::list<int> mylist;
-
-	// set some initial content:
-	for (int i=1; i<10; ++i) mylist.push_back(i);
-
-	mylist.resize(5);
-	std::list<int> mylist2;
-	for (int i = 1; i < 6; i++) mylist2.push_back(-i);
-	std::list<int>::iterator itest = mylist.begin();
-	itest++;
-	mylist.splice(itest, mylist);
-	mylist2.splice(mylist2.begin(), mylist, itest);
-	display(mylist.begin(), mylist.size());
-	display(mylist2.begin(), 3);
-	std::cout << *(++itest) << std::endl;
+	list<int> tlst;
+	for (int i = 0; i < 5; i++) {
+		tlst.push_back(i + 1);
+		tlst.push_back(i + 1);
+	}
+	tlst.push_back(1);
+	tlst.unique(helloTest);
+	cout << tlst.size() << endl;
+	display(tlst.begin(), tlst.size());
 
 	return 0;
 }
