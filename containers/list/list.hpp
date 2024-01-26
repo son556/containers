@@ -57,6 +57,203 @@ namespace ft {
 				this->_size++;
 			}
 
+			void subNode(Node<value_type>* targetNode, list& targetList) {
+				if (targetNode == targetList._head) {
+					targetList._head = targetNode->next;
+					(targetList._head)->before = targetList._tail;
+					(targetList._tail)->next = targetList._head;
+					targetList._size--;
+					return;
+				}
+				targetNode->before->next = targetNode->next;
+				targetNode->next->before = targetNode->before;
+				targetList._size--;
+			}
+
+			Node<value_type>* findNode(Node<value_type>* startNode, Node<value_type>* endNode, value_type val) {
+				Node<value_type>* tmp = startNode;
+				while (tmp != endNode) {
+					if (tmp->val >= val)
+						return tmp;
+					tmp = tmp->next;
+				}
+				return endNode;
+			}
+			
+			template<typename Compare>
+			Node<value_type>* findNode(Node<value_type>* startNode, Node<value_type>* endNode, value_type val, Compare comp) {
+				Node<value_type>* tmp = startNode;
+				while (tmp != endNode) {
+					if (comp(val, tmp->val))
+						return tmp;
+					tmp = tmp->next;
+				}
+				return endNode;
+			}
+
+			Node<value_type>* nodeIndex(unsigned long long idx) {
+				Node<value_type>* tmp = this->_head;
+				for (unsigned long long i = 0; i < idx; i++)
+					tmp = tmp->next;
+				return tmp;
+			}
+
+			void mergeNode(unsigned long long st, unsigned long long mid, unsigned long long ed) {
+				Node<value_type>* left;
+				Node<value_type>* left_end;
+				Node<value_type>* right;
+				Node<value_type>* right_end;
+				Node<value_type>* total;
+				Node<value_type>* tmp;
+				Node<value_type>* head;
+				int flag = 0;
+
+				left = nodeIndex(st);
+				left_end = nodeIndex(mid)->next;
+				right = left_end;
+				right_end = nodeIndex(ed)->next;
+				total = left->before;
+				if (left == this->_head)
+					flag = 1;
+				tmp = NULL;
+				while (left != left_end && right != right_end) {
+					if (left->val < right->val) {
+						if (tmp == NULL) {
+							tmp = left;
+							head = tmp;
+						}
+						else {
+							tmp->next = left;
+							left->before = tmp;
+							tmp = tmp->next;
+						}
+						left = left->next;
+					}
+					else {
+						if (tmp == NULL) {
+							tmp = right;
+							head = right;
+						}
+						else {
+							tmp->next = right;
+							right->before = tmp;
+							tmp = tmp->next;
+						}
+						right = right->next;
+					}
+				}
+				if (left != left_end) {
+					while (left != left_end) {
+						tmp->next = left;
+						left->before = tmp;
+						tmp = tmp->next;
+						left = left->next;
+					}
+				}
+				if (right != right_end) {
+					while (right != right_end) {
+						tmp->next = right;
+						right->before = tmp;
+						tmp = tmp->next;
+						right = right->next;
+					}
+				}
+				total->next = head;
+				head->before = total;
+				tmp->next = right_end;
+				right_end->before = tmp;
+				if (flag)
+					this->_head = head;
+			}
+
+			template<typename Compare>
+			void mergeNode(unsigned long long st, unsigned long long mid, unsigned long long ed, Compare comp) {
+				Node<value_type>* left;
+				Node<value_type>* left_end;
+				Node<value_type>* right;
+				Node<value_type>* right_end;
+				Node<value_type>* total;
+				Node<value_type>* tmp;
+				Node<value_type>* head;
+				int flag = 0;
+
+				left = nodeIndex(st);
+				left_end = nodeIndex(mid)->next;
+				right = left_end;
+				right_end = nodeIndex(ed)->next;
+				total = left->before;
+				if (left == this->_head)
+					flag = 1;
+				tmp = NULL;
+				while (left != left_end && right != right_end) {
+					if (comp(left->val, right->val)) {
+						if (tmp == NULL) {
+							tmp = left;
+							head = tmp;
+						}
+						else {
+							tmp->next = left;
+							left->before = tmp;
+							tmp = tmp->next;
+						}
+						left = left->next;
+					}
+					else {
+						if (tmp == NULL) {
+							tmp = right;
+							head = right;
+						}
+						else {
+							tmp->next = right;
+							right->before = tmp;
+							tmp = tmp->next;
+						}
+						right = right->next;
+					}
+				}
+				if (left != left_end) {
+					while (left != left_end) {
+						tmp->next = left;
+						left->before = tmp;
+						tmp = tmp->next;
+						left = left->next;
+					}
+				}
+				if (right != right_end) {
+					while (right != right_end) {
+						tmp->next = right;
+						right->before = tmp;
+						tmp = tmp->next;
+						right = right->next;
+					}
+				}
+				total->next = head;
+				head->before = total;
+				tmp->next = right_end;
+				right_end->before = tmp;
+				if (flag)
+					this->_head = head;
+			}
+
+			void mergeSort(unsigned long long st, unsigned long long ed) {
+				if (st < ed) {
+					unsigned long long mid = (st + ed) / 2;
+					mergeSort(st, mid);
+					mergeSort(mid + 1, ed);
+					mergeNode(st, mid, ed);
+				}
+			}
+
+			template<typename Compare>
+			void mergeSort(unsigned long long st, unsigned long long ed, Compare comp) {
+				if (st < ed) {
+					unsigned long long mid = (st + ed) / 2;
+					mergeSort(st, mid, comp);
+					mergeSort(mid + 1, ed, comp);
+					mergeNode(st, mid, ed, comp);
+				}
+			}
+
 		public:
 			explicit list(const allocator_type& alloc = allocator_type()) : _alloc(alloc) {
 				startNode();
@@ -470,11 +667,205 @@ namespace ft {
 			}
 
 			void merge (list& x) {
-				
+				Node<value_type>* tmp = x._head;
+				Node<value_type>* tmp2;
+				Node<value_type>* here = this->_head;
+				int cnt = 0;
+				while (tmp != x._tail) {
+					here = findNode(here, this->_tail, tmp->val);
+					tmp2 = tmp->next;
+					subNode(tmp, x);
+					tmp->before = here->before;
+					tmp->next = here;
+					here->before->next = tmp;
+					here->before = tmp;
+					if (here == this->_head) {
+						this->_head = tmp;
+						this->_head->before = this->_tail;
+						this->_tail->next = this->_head;
+					}
+					here = tmp;
+					tmp = tmp2;
+					this->_size++;
+				}
 			}
 
-			template <class Compare>  void merge (list& x, Compare comp);
+			template <class Compare>  
+			void merge (list& x, Compare comp) {
+				Node<value_type>* tmp = x._head;
+				Node<value_type>* tmp2;
+				Node<value_type>* here = this->_head;
+				int cnt = 0;
+				while (tmp != x._tail) {
+					here = findNode(here, this->_tail, tmp->val, comp);
+					tmp2 = tmp->next;
+					subNode(tmp, x);
+					tmp->before = here->before;
+					tmp->next = here;
+					here->before->next = tmp;
+					here->before = tmp;
+					if (here == this->_head) {
+						this->_head = tmp;
+						this->_head->before = this->_tail;
+						this->_tail->next = this->_head;
+					}
+					here = tmp;
+					tmp = tmp2;
+					this->_size++;
+				}
+			}
+
+			
+
+			void sort() {
+				mergeSort(0, this->size() - 1);
+			}
+
+			template <class Compare>  
+			void sort (Compare comp) {
+				mergeSort(0, this->size() - 1, comp);
+			}
+
+			void reverse() {
+				Node<value_type>* mid;
+				Node<value_type>* left;
+				Node<value_type>* right;
+				value_type tmp;
+
+				mid = nodeIndex((this->_size - 1) / 2);
+				if (this->_size % 2)
+					left = mid->before;
+				else
+					left = mid;
+				right = mid->next;
+				while (right != this->_tail) {
+					tmp = left->val;
+					left->val = right->val;
+					right->val = tmp;
+					left = left->before;
+					right = right->next;
+				}
+			}
     };
+
+	template <class T, class Alloc>  
+	bool operator== (const list<T,Alloc>& lhs, const list<T,Alloc>& rhs) {
+		typename list<T, Alloc>::const_iterator it1 = lhs.begin();
+		typename list<T, Alloc>::const_iterator it2 = rhs.begin();
+		
+		if (lhs.size() != rhs.size()) return false;
+		while(it1 != lhs.end() && it2 != rhs.end()) {
+			if (*it1 != *it2) return false;
+			it1++;
+			it2++;
+		}
+		return true;
+	}
+
+	template <class T, class Alloc>  
+	bool operator!= (const list<T,Alloc>& lhs, const list<T,Alloc>& rhs) {
+		return (!(lhs == rhs));
+	}
+
+	template <class T, class Alloc>  
+	bool operator<  (const list<T,Alloc>& lhs, const list<T,Alloc>& rhs) {
+		typename list<T, Alloc>::const_iterator it1 = lhs.begin();
+		typename list<T, Alloc>::const_iterator it2 = rhs.begin();
+		
+		while(it1 != lhs.end() && it2 != rhs.end()) {
+			if (*it1 != *it2) return *it1 < *it2;
+			it1++;
+			it2++;
+		}
+		if (it1 != lhs.end()) {
+			while (it1 != lhs.end()) {
+				if (*it1 != *it2) return *it1 < *it2;
+				it1++;
+			}
+		}
+		if (it2 != rhs.end()) {
+			while (it2 != rhs.end()) {
+				if (*it1 != *it2) return *it1 < *it2;
+				it2++;
+			}
+		}
+		return false;
+	}
+
+	template <class T, class Alloc>  
+	bool operator<= (const list<T,Alloc>& lhs, const list<T,Alloc>& rhs) {
+		typename list<T, Alloc>::const_iterator it1 = lhs.begin();
+		typename list<T, Alloc>::const_iterator it2 = rhs.begin();
+
+		while(it1 != lhs.end() && it2 != rhs.end()) {
+			if (*it1 != *it2) return *it1 <= *it2;
+			it1++;
+			it2++;
+		}
+		if (it1 != lhs.end()) {
+			while (it1 != lhs.end()) {
+				if (*it1 != *it2) return *it1 < *it2;
+				it1++;
+			}
+		}
+		if (it2 != rhs.end()) {
+			while (it2 != rhs.end()) {
+				if (*it1 != *it2) return *it1 < *it2;
+				it2++;
+			}
+		}
+		return true;
+	}
+
+	template <class T, class Alloc>  
+	bool operator>  (const list<T,Alloc>& lhs, const list<T,Alloc>& rhs) {
+		typename list<T, Alloc>::const_iterator it1 = lhs.begin();
+		typename list<T, Alloc>::const_iterator it2 = rhs.begin();
+
+		while(it1 != lhs.end() && it2 != rhs.end()) {
+			if (*it1 != *it2) return *it1 > *it2;
+			it1++;
+			it2++;
+		}
+		if (it1 != lhs.end()) {
+			while (it1 != lhs.end()) {
+				if (*it1 != *it2) return *it1 > *it2;
+				it1++;
+			}
+		}
+		if (it2 != rhs.end()) {
+			while (it2 != rhs.end()) {
+				if (*it1 != *it2) return *it1 > *it2;
+				it2++;
+			}
+		}
+		return false;
+	}
+
+	template <class T, class Alloc>  
+	bool operator>= (const list<T,Alloc>& lhs, const list<T,Alloc>& rhs) {
+		typename list<T, Alloc>::const_iterator it1 = lhs.begin();
+		typename list<T, Alloc>::const_iterator it2 = rhs.begin();
+
+		while(it1 != lhs.end() && it2 != rhs.end()) {
+			if (*it1 != *it2) return *it1 >= *it2;
+			it1++;
+			it2++;
+		}
+		if (it1 != lhs.end()) {
+			while (it1 != lhs.end()) {
+				if (*it1 != *it2) return *it1 >= *it2;
+				it1++;
+			}
+		}
+		if (it2 != rhs.end()) {
+			while (it2 != rhs.end()) {
+				if (*it1 != *it2) return *it1 >= *it2;
+				it2++;
+			}
+		}
+		return true;
+	}
 }
 
 #endif

@@ -36,8 +36,8 @@ void reverseDisplay(Iterator iter, int n) {
 using namespace std;
 
 bool helloTest(int a, int b) {
-	if (a > b) return false;
-	return true;
+	if (a > b) return true;
+	return false;
 }
 
 template<typename T>
@@ -45,29 +45,35 @@ bool ttest(T f, int n) {
 	return f(n);
 }
 
+bool mycomparison (double first, double second)
+{ return ( int(first)<int(second) ); }
+
 int main()
 {
-	ft::list<int> lst;
-	for (int i = 0; i < 5; i++) {
-		lst.push_back(i + 1);
-		lst.push_back(i + 1);
+	ft::list<double> lst;
+	ft::list<double> lst2;
+
+	for (int i = 0; i < 3; i++) {
+		lst.push_back(i);
+		lst2.push_back(i);
 	}
-	lst.push_back(1);
-	lst.unique(helloTest);
-	cout << lst.size() << endl;
-	display(lst.begin(), lst.size());
+	lst.push_back(200);
+	lst2.push_back(1);
+	lst2.push_back(13);
+	cout << (lst < lst2) << endl; 
 
 	cout << "\n\n--------------real-----------------\n\n";
 
-	list<int> tlst;
-	for (int i = 0; i < 5; i++) {
-		tlst.push_back(i + 1);
-		tlst.push_back(i + 1);
-	}
-	tlst.push_back(1);
-	tlst.unique(helloTest);
-	cout << tlst.size() << endl;
-	display(tlst.begin(), tlst.size());
+	list<int> tmp;
+	list<int> tmp2;
 
+	for (int i = 0; i < 5; i++) {
+		tmp.push_back(i);
+		tmp2.push_back(i);
+	}
+	tmp.push_back(200);
+	tmp2.push_back(1);
+	tmp2.push_back(12);
+	cout << (tmp < tmp2) << endl;
 	return 0;
 }
