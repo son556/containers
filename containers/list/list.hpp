@@ -546,6 +546,7 @@ namespace ft {
 						x._size--;
 					}
 				}
+				x.clear();
 			}
 	
 			void splice (iterator position, list& x, iterator i) {

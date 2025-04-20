@@ -62,7 +62,6 @@ void test_List(void)
 			std::cout << "empty list size = " << empty_list.size() << '\n';
 				assert(empty_list.size() == 0);
 		}
-
 		ListType lst;
 		lst.push_back(5);
 		lst.push_back(42);
@@ -77,7 +76,6 @@ void test_List(void)
 				assert(*--lst.end() == 42);
 		}
 	}
-
 	std::cout << "\n---push_back\n\n";
 	{
 		ListType lst;
@@ -371,7 +369,7 @@ void test_List(void)
 
 		std::cout << "double list:" << '\n';
 		{
-			ft::List<double> lst;
+			ft::list<double> lst;
 			lst.push_back(2.72);
 			lst.push_back(3.14);
 			lst.push_back(12.15);
@@ -389,7 +387,6 @@ void test_List(void)
 				assert(lst.size() == 6);
 		}
 	}
-
 	std::cout << "\n---unique (binary pred again)\n\n";
 	{
 		ListType lst;

@@ -11,7 +11,7 @@ vpath %.hpp $(INC_DIRS)
 ## file
 HEADERS += iterator_traits.hpp reverse_iterator.hpp vector.hpp vector_test.hpp Number.hpp random_access_iterator.hpp
 HEADERS += type_traits.hpp algorithm.hpp priority_queue.hpp deque.hpp deque_iterator.hpp deque_test.hpp
-HEADERS += stack_test.hpp queue.hpp list.hpp
+HEADERS += stack_test.hpp queue.hpp list.hpp list_test.hpp
 SRCS = test_container.cpp 
 OBJS = $(SRCS:.cpp=.o)
 
@@ -31,14 +31,14 @@ $(OBJS): %.o: %.cpp $(HEADERS)
 	$(CXX) $(CXXFLAGS) -o $@ -c $<
 
 clean:
-	@erase std_out
-	@erase ft_out
-	@erase $(OBJS) 
+	@rm -rf std_out
+	@rm -rf ft_out
+	@rm -rf $(OBJS) 
 
 fclean: clean
-	@erase std_out
-	@erase ft_out
-	@erase $(NAME).exe
+	@rm -rf std_out
+	@rm -rf ft_out
+	@rm -rf $(NAME).exe
 
 re:
 	@make fclean
