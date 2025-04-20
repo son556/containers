@@ -341,6 +341,7 @@ namespace ft {
 			}
 
 			iterator insert (iterator position, const value_type& val) {
+				std::cout << "here insert" << std::endl;
 				if (this->_size + 1 > this->_max_size)
 					throw std::out_of_range("ft::deque");
 				push_back(val);
@@ -531,23 +532,3 @@ namespace ft {
 
 }
 #endif
-
-/**
- * @brief 내가 만난 문제점들..
- * 
- * 1. 처음 deque을 만들 때 2차원 배열을 만드려고 했지만 값을 추가할 때 벡터에서 했던 행동을 그대로 직접구현해야 하는 
- * 		일이 발생해서 벡터로 배열을 만들고 베열의 각각의 요소는 청크의 포인터를 갖도록 만들었음. 청크는 고정된 5칸 배열로 만듦.
- * 		이렇게 하면 벡터의 iterator를 사용하고 deque이 갖고 있는 용량을 전부 사용한 경우 쉽게 확장이 가능함.
- * 		_begin -> 청크의 포인터를 갖고 있는 벡터.
- * 		_start -> 벡터에서 첫 번째로 값을 작성한 청크가 있는 위치를 가리킴.
- * 		_start_ptr -> 첫 번째로 값을 작성한 청크에서 첫 번째 값이 있는 위치를 포인터로 가리킴.
- * 		_end -> 벡터에서 _end_ptr이 존재하는 청크의 위치를 가리킴.
- * 		_end_ptr -> 청크에서 마지막으로 작성한 값이 있는 위치 다음을 가리킴. 
- * 
- * 2. 구조의 문제 -> deque의 iterator를 만들 때 iterator를 deque이 멤버변수로 갖고있으면 된다고 생각 했지만
- * 				   그렇게 되면 iterator에 쓸모없는 값들이 많이 생기고 복잡해짐
- * iterator는 iterator의 역할에만 집중할 수 있게 청크의 포인터와 청크 요소의 주소를 가리키는 포인터만 갖게함.
- * 
- * 
- * 
- */

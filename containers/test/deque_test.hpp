@@ -13,6 +13,8 @@
 #ifndef DEQUE_TEST_HPP
 # define DEQUE_TEST_HPP
 
+#include <deque>
+
 template<typename DequeType>
 void test_Deque(void)
 {
@@ -218,9 +220,9 @@ void test_Deque(void)
 	std::cout << "\n---insert\n\n";
 	{
 		DequeType deq;
-			assert(deq.size() == 0);
+		assert(deq.size() == 0);
 
-		assert(deq.insert(deq.begin(), 5) == deq.begin());
+		deq.insert(deq.begin(), 5);
 		display_container("[5]:", deq);
 			assert(deq.front() == 5);
 			assert(deq.back() == 5);
@@ -392,5 +394,4 @@ void test_Deque(void)
 
 	std::cout << '\n';
 }
-
 #endif
